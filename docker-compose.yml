@@ -1,12 +1,62 @@
 version: "3"
-name: bookteria
 services:
+  mongodb:
+    image: 'mongo:4.4.6'
+    container_name: mongodb
+    hostname: mongodb
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    networks:
+      - genbook-network-internal
+
+  phpmyadmin:
+    image: 'phpmyadmin/phpmyadmin'
+    container_name: phpmyadmin
+    hostname: phpmyadmin
+    ports:
+      - '3308:3308'
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+    networks:
+      - genbook-network-internal
+
+  mysql:
+    image: 'mysql:8.0.25'
+    container_name: mysql
+    hostname: mysql
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=root
+    networks:
+      - genbook-network-internal
+  neo4j:
+    image: 'neo4j:4.3.1'
+    container_name: neo4j
+    hostname: neo4j
+    ports:
+      - '7687:7687'
+      - '7474:7474'
+      - '7473:7473'
+    environment:
+      - NEO4J_AUTH=neo4j/12345678
+    networks:
+      - genbook-network-internal
+
   kafka:
     image: 'bitnami/kafka:3.7.0'
     container_name: kafka
     hostname: kafka
     ports:
       - '9094:9094'
+      - '9092:9092'
     environment:
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
@@ -15,3 +65,9 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+    networks:
+      - genbook-network-internal
+
+networks:
+  genbook-network-internal:
+    driver: bridge
