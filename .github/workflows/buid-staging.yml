@@ -1,0 +1,41 @@
+name: Build staging
+
+on:
+  pull_request:
+    branches: [deploy-staging]
+  push:
+    branches: [deploy-staging]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build all modules
+        run: mvn clean install -DskipTests
+
+      - name: Login to Docker Hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+
+      - name: Build and Tag Docker Images
+        run: |
+          # docker build -t trongvinhlam/api-gateway:latest ./api-gateway-service
+          # docker build -t trongvinhlam/identity-service:latest ./identity-service
+          # docker build -t trongvinhlam/notification-service:latest ./notification-service
+          # docker build -t trongvinhlam/post-service:latest ./post-service
+          # docker build -t trongvinhlam/profile-service:latest ./profile-service
+
+      - name: Push Docker Images
+        run: |
+          # docker push trongvinhlam/api-gateway:latest
+          # docker push trongvinhlam/identity-service:latest
+          # docker push trongvinhlam/notification-service:latest
+          # docker push trongvinhlam/post-service:latest
+          # docker push trongvinhlam/profile-service:latest
