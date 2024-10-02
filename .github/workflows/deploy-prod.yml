@@ -1,8 +1,8 @@
-name: Deploy staging
+name: Deploy prod
 
 on:
   workflow_run:
-    workflows: [ "Build staging" ]
+    workflows: [ "Build prod" ]
     types:
       - completed
   push:
