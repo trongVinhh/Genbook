@@ -7,7 +7,7 @@ spring:
   application:
     name: identity-service
   datasource:
-    url: "jdbc:mysql://localhost:3306/genbook_identity"
+    url: "jdbc:mysql://mysql:3306/genbook_identity"
     driverClassName: "com.mysql.cj.jdbc.Driver"
     username: root
     password: root
@@ -27,4 +27,4 @@ jwt:
 
 app:
   services:
-    profile: http://localhost:8081/profile
+    profile: http://profile_service:8081/profile

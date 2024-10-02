@@ -1,10 +1,10 @@
-name: Build staging
+name: Build prod
 
 on:
   pull_request:
-    branches: [deploy-staging]
+    branches: [main]
   push:
-    branches: [deploy-staging]
+    branches: [main]
 jobs:
   build:
     runs-on: ubuntu-latest
