@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
-        run:
+        run: |
           echo "Login to Docker Hub"
           sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
 
       - name: Pull Docker Images
-        run:
-            echo "Pull Docker Images"
+        run: |
+          echo "Pull Docker Images"
 #          sudo docker pull trongvinhlam/api-gateway:latest
 #          sudo docker pull trongvinhlam/identity-service:latest
 #          sudo docker pull trongvinhlam/notification-service:latest

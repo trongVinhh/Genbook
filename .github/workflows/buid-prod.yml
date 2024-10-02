@@ -19,12 +19,12 @@ jobs:
           java-version: '21'
 
       - name: Build all modules
-        run:
+        run: |
           echo "Build all modules"
           mvn clean install -DskipTests
 
       - name: Login to Docker Hub
-        run:
+        run: |
           echo "Login to Docker Hub"
           docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
 
