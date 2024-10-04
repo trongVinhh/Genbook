@@ -11,18 +11,19 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=root
     networks:
       - genbook-network-internal
+    volumes:
+      - mongodb-data:/data/db
 
   phpmyadmin:
-    image: 'phpmyadmin/phpmyadmin'
-    container_name: phpmyadmin
-    hostname: phpmyadmin
+    depends_on:
+      - mysql
+    image: phpmyadmin
+    restart: always
     ports:
-      - '3308:3308'
+      - "8090:80"
     environment:
-      - PMA_HOST=mysql
-      - PMA_PORT=3306
-      - PMA_USER=root
-      - PMA_PASSWORD=root
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
     networks:
       - genbook-network-internal
 
@@ -37,6 +38,8 @@ services:
       - MYSQL_DATABASE=root
     networks:
       - genbook-network-internal
+    volumes:
+        - mysql-data:/var/lib/mysql
   neo4j:
     image: 'neo4j:4.3.1'
     container_name: neo4j
@@ -49,6 +52,8 @@ services:
       - NEO4J_AUTH=neo4j/12345678
     networks:
       - genbook-network-internal
+    volumes:
+      - neo4j-data:/data
 
   kafka:
     image: 'bitnami/kafka:3.7.0'
@@ -67,7 +72,14 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
     networks:
       - genbook-network-internal
+    volumes:
+      - kafka-data:/bitnami/kafka
 
 networks:
   genbook-network-internal:
     driver: bridge
+volumes:
+    mysql-data:
+    neo4j-data:
+    kafka-data:
+    mongodb-data:

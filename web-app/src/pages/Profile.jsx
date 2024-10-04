@@ -59,7 +59,7 @@ export default function Profile() {
                 mb: "40px",
               }}
             >
-              Welcome back to Devteria, {userDetails.username} !
+              Welcome back to Genbook, {userDetails.username} !
             </Typography>
             <Box
               sx={{

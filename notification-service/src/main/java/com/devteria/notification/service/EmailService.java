@@ -25,6 +25,14 @@ import lombok.experimental.NonFinal;
 public class EmailService {
     EmailClient emailClient;
 
+    @Value("${notification.email.sender-email}")
+    @NonFinal
+    String senderEmail;
+
+    @Value("${notification.email.subject}")
+    @NonFinal
+    String subject;
+
     @Value("${notification.email.brevo-apikey}")
     @NonFinal
     String apiKey;
@@ -32,8 +40,8 @@ public class EmailService {
     public EmailResponse sendEmail(SendEmailRequest request) {
         EmailRequest emailRequest = EmailRequest.builder()
                 .sender(Sender.builder()
-                        .name("Devteria DotCom")
-                        .email("devteriadotcom@gmail.com")
+                        .name(subject)
+                        .email(senderEmail)
                         .build())
                 .to(List.of(request.getTo()))
                 .subject(request.getSubject())

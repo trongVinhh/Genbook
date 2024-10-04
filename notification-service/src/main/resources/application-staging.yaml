@@ -20,4 +20,6 @@ spring:
 notification:
   email:
     brevo-url: https://api.brevo.com
-    brevo-apikey: <key>
+    brevo-apikey: ${{secrets.BREVO_API_KEY}}
+    sender-email: lamtrongvinh2905@gmail.com
+    subject: Genbook - GenZ love books
