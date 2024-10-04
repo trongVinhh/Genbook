@@ -11,7 +11,7 @@ spring:
     gateway:
       routes:
         - id: identity_service
-          uri: http://identity_service:8080
+          uri: http://localhost:8080
           predicates:
             - Path=${app.api-prefix}/identity/**
           filters:
@@ -23,13 +23,13 @@ spring:
           filters:
             - StripPrefix=2
         - id: notification_service
-          uri: http://notification_service:8082
+          uri: http://localhost:8082
           predicates:
             - Path=${app.api-prefix}/notification/**
           filters:
             - StripPrefix=2
         - id: post_service
-          uri: http://post_service:8083
+          uri: http://localhost:8083
           predicates:
             - Path=${app.api-prefix}/post/**
           filters:
