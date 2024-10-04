@@ -23,10 +23,6 @@ jobs:
           echo "Build all modules"
           mvn clean install -DskipTests
 
-      - name: Check config.json
-        run: |
-          cat /home/runner/.docker/config.json
-
       - name: Login to Docker Hub
         run: |
           echo "Login to Docker Hub"
@@ -35,23 +31,23 @@ jobs:
       - name: Build and Tag Docker Images
         run: |
           echo "Build and Tag Docker Images"
-           sudo docker build --build-arg SPRING_PROFILE=staging -t trongvinhlam/api-gateway-genbook:latest ./api-gateway
-           sudo docker build --build-arg SPRING_PROFILE=staging -t trongvinhlam/identity-service-genbook:latest ./identity-service
-           sudo docker build --build-arg SPRING_PROFILE=staging -t trongvinhlam/notification-service-genbook:latest ./notification-service
-           sudo docker build --build-arg SPRING_PROFILE=staging -t trongvinhlam/post-service-genbook:latest ./post-service
-           sudo docker build --build-arg SPRING_PROFILE=staging -t trongvinhlam/profile-service-genbook:latest ./profile-service
+          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/api-gateway:latest ./api-gateway
+          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/identity-service:latest ./identity-service
+          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/notification-service:latest ./notification-service
+          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/post-service:latest ./post-service
+          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/profile-service:latest ./profile-service
 
       - name: Push Docker Images
         run: |
           echo "Push Docker Images"
-          sudo docker push trongvinhlam/api-gateway-genbook:latest
-          sudo docker push trongvinhlam/identity-service-genbook:latest
-          sudo docker push trongvinhlam/notification-service-genbook:latest
-          sudo docker push trongvinhlam/post-service-genbook:latest
-          sudo docker push trongvinhlam/profile-service-genbook:latest
+          docker push lamtrongvinh2905vnu/api-gateway:latest
+          docker push lamtrongvinh2905vnu/identity-service:latest
+          docker push lamtrongvinh2905vnu/notification-service:latest
+          docker push lamtrongvinh2905vnu/post-service:latest
+          docker push lamtrongvinh2905vnu/profile-service:latest
   deploy:
     needs: build
-    runs-on: [genbook-staging]
+    runs-on: [ec2]
     steps:
       - name: Login to Docker Hub
         run: |
@@ -61,18 +57,28 @@ jobs:
       - name: Pull Docker Images
         run: |
           echo "Pull Docker Images"
-          sudo docker pull trongvinhlam/api-gateway-genbook:latest
-          sudo docker pull trongvinhlam/identity-service-genbook:latest
-          sudo docker pull trongvinhlam/notification-service-genbook:latest
-          sudo docker pull trongvinhlam/post-service-genbook:latest
-          sudo docker pull trongvinhlam/profile-service-genbook:latest
+          docker pull lamtrongvinh2905vnu/api-gateway:latest
+          docker pull lamtrongvinh2905vnu/identity-service:latest
+          docker pull lamtrongvinh2905vnu/notification-service:latest
+          docker pull lamtrongvinh2905vnu/post-service:latest
+          docker pull lamtrongvinh2905vnu/profile-service:latest
 
       - name: Stop and Remove Old Containers
         run: |
-          echo "Stop and Remove Old Containers"
-          sudo docker rm -f api-gateway-genbook identity-service-genbook notification-service-genbook post-service-genbook profile-service-genbook
+          sudo docker rm -f api-gateway
+          sudo docker rm -f identity-service
+          sudo docker rm -f notification-service
+          sudo docker rm -f post-service
+          sudo docker rm -f profile-service
 
-      - name: Start Services using Docker Compose
+      - name: Delete images don't use
         run: |
-          echo "Start Services using Docker Compose"
-          sudo docker start api-gateway-genbook identity-service-genbook notification-service-genbook post-service-genbook profile-service-genbook
+          sudo docker image prune -f
+
+      - name: Start Containers
+        run: |
+          sudo docker run -d --name api-gateway --network genbook-network-internal lamtrongvinh2905vnu/api-gateway:latest
+          sudo docker run -d --name identity-service --network genbook-network-internal lamtrongvinh2905vnu/identity-service:latest
+          sudo docker run -d --name notification-service --network genbook-network-internal lamtrongvinh2905vnu/notification-service:latest
+          sudo docker run -d --name post-service --network genbook-network-internal lamtrongvinh2905vnu/post-service:latest
+          sudo docker run -d --name profile-service --network genbook-network-internal lamtrongvinh2905vnu/profile-service:latest
