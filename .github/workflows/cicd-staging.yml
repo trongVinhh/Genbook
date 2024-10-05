@@ -17,7 +17,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+
+      - name: Setup environment
+        env:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+        run: |
+          echo "Setup environment"
+          echo "BREVO_API_KEY=$BREVO_API_KEY"
           
       - name: Build all modules
         run: |
@@ -75,6 +81,10 @@ jobs:
       - name: Delete images don't use
         run: |
           sudo docker image prune -f
+
+      - name: Start docker compose
+        run: |
+          docker compose up -d
 
       - name: Start Containers
         run: |

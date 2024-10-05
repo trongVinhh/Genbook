@@ -17,12 +17,19 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+
+      - name: Setup environment
+        evn:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+        run: |
+          echo "Setup environment"
+          echo "BREVO_API_KEY=$BREVO_API_KEY"
 
       - name: Build all modules
         run: |
           echo "Build all modules"
           mvn clean install -DskipTests
+
 
       - name: Login to Docker Hub
         run: |
@@ -66,10 +73,24 @@ jobs:
 
       - name: Stop and Remove Old Containers
         run: |
-          echo "Stop and Remove Old Containers"
-          sudo docker rm -f api-gateway-prod identity-service-prod notification-service-prod post-service-prod profile-service-prod
+          sudo docker rm -f api-gateway-prod
+          sudo docker rm -f identity-service-prod
+          sudo docker rm -f notification-service-prod
+          sudo docker rm -f post-service-prod
+          sudo docker rm -f profile-service-prod
 
-      - name: Start Services using Docker Compose
+      - name: Delete images don't use
         run: |
-          echo "Start Services using Docker Compose"
-          sudo docker start api-gateway-prod identity-service-prod notification-service-prod post-service-prod profile-service-prod
+          sudo docker image prune -f
+
+      - name: Start docker compose
+        run: |
+          docker compose up -d
+
+      - name: Start Containers
+        run: |
+          sudo docker run -p 8888:8888 -d --name api-gateway --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/api-gateway-prod:latest
+          sudo docker run -d --name identity-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/identity-service-prod:latest
+          sudo docker run -d --name notification-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/notification-service-prod:latest
+          sudo docker run -d --name post-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/post-service-prod:latest
+          sudo docker run -d --name profile-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/profile-service-prod:latest
