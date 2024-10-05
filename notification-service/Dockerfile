@@ -18,6 +18,7 @@ COPY --from=build /app/target/*.jar app.jar
 
 ARG SPRING_PROFILE=staging
 ENV SPRING_PROFILE=${SPRING_PROFILE}
+ENV BREVO_API_KEY=${BREVO_API_KEY}
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=${SPRING_PROFILE}", "app.jar"]
