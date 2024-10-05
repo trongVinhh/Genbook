@@ -48,12 +48,14 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         HashSet<Role> roles = new HashSet<>();
 
+        log.info("find role by id: {}", PredefinedRole.USER_ROLE);
         roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
 
         user.setRoles(roles);
         user.setEmailVerified(false);
 
         try {
+            log.info("Creating user with email: {}, username: {}", request.getEmail(), request.getUsername());
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -62,8 +64,10 @@ public class UserService {
         var profileRequest = profileMapper.toProfileCreationRequest(request);
         profileRequest.setUserId(user.getId());
 
+        log.info("Creating profile for user with id: {}", user.getId());
         var profile = profileClient.createProfile(profileRequest);
 
+        log.info("Profile created with id: {}", profile.getResult().getId());
         NotificationEvent notificationEvent = NotificationEvent.builder()
                 .channel("EMAIL")
                 .recipient(request.getEmail())
@@ -75,6 +79,7 @@ public class UserService {
         kafkaTemplate.send("notification-delivery", notificationEvent);
 
         var userCreationReponse = userMapper.toUserResponse(user);
+        log.info("User created with id: {}", profile.getResult().getId());
         userCreationReponse.setId(profile.getResult().getId());
 
         return userCreationReponse;
