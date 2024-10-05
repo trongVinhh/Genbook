@@ -12,6 +12,14 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v3
 
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -23,7 +31,7 @@ jobs:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
         run: |
           echo "Setup environment"
-          echo "BREVO_API_KEY=$BREVO_API_KEY"
+          export BREVO_API_KEY=${{ secrets.BREVO_API_KEY }}
           
       - name: Build all modules
         run: |
@@ -72,15 +80,15 @@ jobs:
 
       - name: Stop and Remove Old Containers
         run: |
-          sudo docker rm -f api-gateway
-          sudo docker rm -f identity-service
-          sudo docker rm -f notification-service
-          sudo docker rm -f post-service
-          sudo docker rm -f profile-service
+          docker rm -f api-gateway
+          docker rm -f identity-service
+          docker rm -f notification-service
+          docker rm -f post-service
+          docker rm -f profile-service
 
       - name: Delete images don't use
         run: |
-          sudo docker image prune -f
+          docker image prune -f
 
       - name: Start docker compose
         run: |
@@ -88,8 +96,8 @@ jobs:
 
       - name: Start Containers
         run: |
-          sudo docker run -p 8888:8888 -d --name api-gateway --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/api-gateway:latest
-          sudo docker run -d --name identity-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/identity-service:latest
-          sudo docker run -d --name notification-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/notification-service:latest
-          sudo docker run -d --name post-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/post-service:latest
-          sudo docker run -d --name profile-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/profile-service:latest
+          docker run -p 8888:8888 -d --name api-gateway --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/api-gateway:latest
+          docker run -d --name identity-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/identity-service:latest
+          docker run -d --name notification-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/notification-service:latest
+          docker run -d --name post-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/post-service:latest
+          docker run -d --name profile-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/profile-service:latest
