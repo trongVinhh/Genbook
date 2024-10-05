@@ -12,4 +12,4 @@ spring:
 app:
   services:
     profile:
-      url: http://profile_service:8081/profile
+      url: http://profile-service:8081/profile

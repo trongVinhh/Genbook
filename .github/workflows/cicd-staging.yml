@@ -18,6 +18,10 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Enviroment BREVO KEY
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+
       - name: Build all modules
         run: |
           echo "Build all modules"
