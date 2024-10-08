@@ -3,6 +3,7 @@ server:
 
 app:
   api-prefix: /api/v1
+  webclient-domain: http://identity-service:8080/identity
 
 spring:
   application:

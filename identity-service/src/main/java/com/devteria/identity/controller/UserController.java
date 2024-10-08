@@ -35,6 +35,7 @@ public class UserController {
 
     @GetMapping
     ApiResponse<List<UserResponse>> getUsers() {
+        log.info("Getting all users");
         return ApiResponse.<List<UserResponse>>builder()
                 .result(userService.getUsers())
                 .build();
@@ -42,6 +43,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
+        log.info("Getting user with id: {}", userId);
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getUser(userId))
                 .build();
@@ -49,6 +51,7 @@ public class UserController {
 
     @GetMapping("/my-info")
     ApiResponse<UserResponse> getMyInfo() {
+        log.info("Getting my info");
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getMyInfo())
                 .build();
@@ -56,12 +59,14 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     ApiResponse<String> deleteUser(@PathVariable String userId) {
+        log.info("Deleting user with id: {}", userId);
         userService.deleteUser(userId);
         return ApiResponse.<String>builder().result("User has been deleted").build();
     }
 
     @PutMapping("/{userId}")
     ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+        log.info("Updating user with id: {}", userId);
         return ApiResponse.<UserResponse>builder()
                 .result(userService.updateUser(userId, request))
                 .build();

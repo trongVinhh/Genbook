@@ -1,0 +1,52 @@
+name: Build prod
+
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup environment
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+        run: |
+          echo "Setup environment"
+          export BREVO_API_KEY=${{ secrets.BREVO_API_KEY }}
+          
+      - name: Build all modules
+        run: |
+          echo "Build all modules"
+          mvn clean install -DskipTests
+
+      - name: Login to Docker Hub
+        run: |
+          echo "Login to Docker Hub"
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Build and Tag Docker Images
+        run: |
+          echo "Build and Tag Docker Images"
+          docker build --build-arg SPRING_PROFILE=prod -t lamtrongvinh2905vnu/api-gateway:latest ./api-gateway
+          docker build --build-arg SPRING_PROFILE=prod -t lamtrongvinh2905vnu/identity-service:latest ./identity-service
+          docker build --build-arg SPRING_PROFILE=prod -t lamtrongvinh2905vnu/notification-service:latest ./notification-service
+          docker build --build-arg SPRING_PROFILE=prod -t lamtrongvinh2905vnu/post-service:latest ./post-service
+          docker build --build-arg SPRING_PROFILE=prod -t lamtrongvinh2905vnu/profile-service:latest ./profile-service
+

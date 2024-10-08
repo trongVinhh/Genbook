@@ -27,13 +27,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostService {
+    private static final String TAG = "[PostService]";
     DateTimeFormatter dateTimeFormatter;
     PostRepository postRepository;
     PostMapper postMapper;
     ProfileClient profileClient;
 
     public PostResponse createPost(PostRequest request){
+        log.info("{} Creating post with content: {}", TAG, request.getContent());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("User: {}", authentication.getName());
 
         Post post = Post.builder()
                 .content(request.getContent())
@@ -42,17 +45,21 @@ public class PostService {
                 .modifiedDate(Instant.now())
                 .build();
 
+        log.info("Saving post: {}", post);
         post = postRepository.save(post);
         return postMapper.toPostResponse(post);
     }
 
     public PageResponse<PostResponse> getMyPosts(int page, int size){
+        log.info("{} Getting my posts", TAG);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication.getName();
+        log.info("User: {}", userId);
 
         UserProfileResponse userProfile = null;
 
         try {
+            log.info("Getting user profile");
             userProfile = profileClient.getProfile(userId).getResult();
         } catch (Exception e) {
             log.error("Error while getting user profile", e);
@@ -69,6 +76,7 @@ public class PostService {
             postResponse.setUsername(username);
             return postResponse;
         }).toList();
+        log.info("Found {} posts", postList.size());
 
         return PageResponse.<PostResponse>builder()
                 .currentPage(page)
