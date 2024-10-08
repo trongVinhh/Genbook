@@ -1,4 +1,4 @@
-# bookteria
+# genbook
 The bookteria project, a book social network
 
 # Install Kafka
