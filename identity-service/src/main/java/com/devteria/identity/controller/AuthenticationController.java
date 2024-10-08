@@ -2,6 +2,7 @@ package com.devteria.identity.controller;
 
 import java.text.ParseException;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -26,12 +28,14 @@ public class AuthenticationController {
 
     @PostMapping("/token")
     ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        log.info("Authenticating user with email: {}", request.toString());
         var result = authenticationService.authenticate(request);
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request) {
+        log.info("Introspecting token: {}", request.getToken());
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder().result(result).build();
     }
@@ -39,12 +43,14 @@ public class AuthenticationController {
     @PostMapping("/refresh")
     ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request)
             throws ParseException, JOSEException {
+        log.info("Refreshing token: {}", request.toString());
         var result = authenticationService.refreshToken(request);
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 
     @PostMapping("/logout")
     ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        log.info("Logging out user with email: {}", request.toString());
         authenticationService.logout(request);
         return ApiResponse.<Void>builder().build();
     }

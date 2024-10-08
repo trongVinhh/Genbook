@@ -1,6 +1,9 @@
 package com.devteria.gateway.configuration;
 
 import com.devteria.gateway.repository.IdentityClient;
+import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -12,12 +15,18 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import java.util.List;
 
+@Slf4j
 @Configuration
 public class WebClientConfiguration {
+    @NonFinal
+    @Value("${app.webclient-domain}")
+    private String webClientIdentity;
+
     @Bean
     WebClient webClient(){
+        log.info("Creating web client for identity domain service: {}", webClientIdentity);
         return WebClient.builder()
-                .baseUrl("http://localhost:8080/identity")
+                .baseUrl(webClientIdentity)
                 .build();
     }
 
