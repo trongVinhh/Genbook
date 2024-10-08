@@ -1,8 +1,6 @@
 name: Build and Deploy to Staging
 
 on:
-  pull_request:
-    branches: [deploy-staging]
   push:
     branches: [deploy-staging]
 jobs:
