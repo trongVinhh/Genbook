@@ -36,17 +36,3 @@ jobs:
           echo "Build all modules"
           mvn clean install -DskipTests
 
-      - name: Login to Docker Hub
-        run: |
-          echo "Login to Docker Hub"
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
-      - name: Build and Tag Docker Images
-        run: |
-          echo "Build and Tag Docker Images"
-          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/api-gateway:latest ./api-gateway
-          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/identity-service:latest ./identity-service
-          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/notification-service:latest ./notification-service
-          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/post-service:latest ./post-service
-          docker build --build-arg SPRING_PROFILE=staging -t lamtrongvinh2905vnu/profile-service:latest ./profile-service
-
