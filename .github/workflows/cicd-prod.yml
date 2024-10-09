@@ -94,7 +94,7 @@ jobs:
 
       - name: Start Containers
         run: |
-          sudo docker run -p 8888:8888 -d --name api-gateway --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/api-gateway-prod:latest
+          sudo docker run -d --name api-gateway --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/api-gateway-prod:latest
           sudo docker run -d --name identity-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/identity-service-prod:latest
           sudo docker run -d --name notification-service --network ubuntu_genbook-network-internal -e BREVO_API_KEY=${{ secrets.BREVO_API_KEY }} lamtrongvinh2905vnu/notification-service-prod:latest
           sudo docker run -d --name post-service --network ubuntu_genbook-network-internal lamtrongvinh2905vnu/post-service-prod:latest
